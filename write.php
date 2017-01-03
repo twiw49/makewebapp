@@ -1,75 +1,40 @@
-<?php
-require("config/config.php");
-require("lib/db.php");
-$conn = db_init($config["host"], $config["duser"], $config["dpw"], $config["dname"]);
-$result = mysqli_query($conn, "SELECT * FROM topic");
-?>
-<!DOCTYPE html>
-<html>
-<head>
-     <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-  <link rel="stylesheet" type="text/css" href="http://localhost/style.css">
+<?php include('include/header.php') ?>
 
-  <link href="http://localhost/bootstrap-3.3.4-dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body id="target">
-  <div class="container">
+  <article>
+    <form action="process.php" method="post"> <!-- form에 입력된 정보들은 POST 방식으로 process.php에 보내져서 처리됨  -->
+      <div class="form-group">
+        <label for="form-title">제목</label>
+        <input type="text" class="form-control" name="title" id="form-title" placeholder="제목을 적어주세요.">
+      </div>
 
-    <header class="jumbotron text-center">
-      <img src="https://s3-ap-northeast-1.amazonaws.com/opentutorialsfile/course/94.png" alt="생활코딩" class="img-circle" id="logo">
-        <h1><a href="http://localhost/index.php">JavaScript</a></h1>
-    </header>
-    <div class="row">
+      <div class="form-group">
+        <label for="form-author">작성자</label>
+        <input type="text" class="form-control" name="author" id="form-author" placeholder="작성자를 적어주세요.">
+      </div>
 
-        <nav class="col-md-3">
-          <ol class="nav nav-pills nav-stacked">
-          <?php
-          while( $row = mysqli_fetch_assoc($result)){
-            echo '<li><a href="http://localhost/index.php?id='.$row['id'].'">'.htmlspecialchars($row['title']).'</a></li>'."\n";
-          }
-          ?>
-          </ ol>
-        </nav>
-        <div class="col-md-9">
+      <div class="form-group">
+        <label for="form-description">본문</label>
+        <textarea class="form-control" rows="10" name="description"  id="form-description" placeholder="본문을 적어주세요."></textarea>
+      </div>
 
-          <article>
-            <form action="process.php" method="post">
+      <input type="submit" name="name" class="btn btn-default  btn-lg">
+      <input type="hidden" role="uploadcare-uploader" />  <!-- uploadcare 버튼 삽입 -->
+    </form>
+</article>
 
-              <div class="form-group">
-                <label for="form-title">제목</label>
-                <input type="text" class="form-control" name="title" id="form-title" placeholder="제목을 적어주세요.">
-              </div>
+<?php include('include/footer.php') ?>
 
-              <div class="form-group">
-                <label for="form-author">작성자</label>
-                <input type="text" class="form-control" name="author" id="form-author" placeholder="작성자를 적어주세요.">
-              </div>
+<!-- uploadcare JS -->
+<script>UPLOADCARE_PUBLIC_KEY = "ff7215f80f4174d9ed83";</script>
+<script charset="utf-8" src="//ucarecdn.com/libs/widget/2.10.2/uploadcare.full.min.js"></script>
 
-              <div class="form-group">
-                <label for="form-author">본문</label>
-                <textarea class="form-control" rows="10" name="description"  id="form-author" placeholder="본문을 적어주세요."></textarea>
-              </div>
-
-              <input type="submit" name="name" class="btn btn-default  btn-lg">
-            </form>
-          </article>
-          <hr>
-          <div id="control">
-            <div class="btn-group" role="group" aria-label="...">
-              <input type="button" value="white" onclick="document.getElementById('target').className='white'" class="btn btn-default  btn-lg"/>
-              <input type="button" value="black" onclick="document.getElementById('target').className='black'" class="btn btn-default btn-lg"/>
-            </div>
-            <a href="http://localhost/write.php" class="btn btn-success  btn-lg">쓰기</a>
-          </div>
-        </div>
-    </div>
-  </div>
-  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="http://localhost/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
-</body>
-</html>
+<!-- 파일을 업로드한 후, 그 이미지를 본문에 삽입하고자 할 경우 -->
+<script>
+  // role = uploadcare-uploader 인 태그를 업로드 위젯으로 만들어라!
+  var singleWidget = uploadcare.SingleWidget( ' [role=uploadcare-uploader] ' );
+  // 그 위젯을 통해서 업로드가 끝났을 때,
+  singleWidget.onUploadComplete(function(info) {
+    // id 값이 description인 태그의 값 뒤에 업로드한 이미지 파일의 주소를 이미지 태그와 함께 첨부해라.
+    document.getElementById('form-description').value += '<img src="'+info.cdnUrl+'">'
+  });
+</script>

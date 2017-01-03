@@ -2,7 +2,7 @@
 $config = array(
   "host"=>"localhost",
   "duser"=>"root",
-  "dpw"=>"111111",
+  "dpw"=>"twiw1534",
   "dname"=>"opentutorials"
 );
 ?>
